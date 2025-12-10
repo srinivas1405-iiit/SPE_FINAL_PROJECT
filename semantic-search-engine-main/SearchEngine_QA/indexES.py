@@ -7,7 +7,6 @@ import csv
 import tensorflow as tf
 import tensorflow_hub as hub
 
-
 # connect to ES on localhost on port 9200
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 if es.ping():
@@ -49,7 +48,7 @@ print(json.dumps(ret,indent=4))
 
 print("*********************************************************************************");
 
-sys.exit();
+
 
 #load USE4 model
 
@@ -64,7 +63,7 @@ NUM_QUESTIONS_INDEXED = 200000
 # Col-Names: Id,OwnerUserId,CreationDate,ClosedDate,Score,Title,Body
 cnt=0
 
-with open('./data/Questions.csv', encoding="latin1") as csvfile:
+with open('./semantic-search-engine-main/SearchEngine_QA/data/Questions.csv', encoding="latin1") as csvfile:
 	readCSV = csv.reader(csvfile, delimiter=',' )
 	next(readCSV, None)  # skip the headers 
 	for row in readCSV:
