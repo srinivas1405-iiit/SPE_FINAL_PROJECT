@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    networks:
+      - search-net
+
+  web:
+    build: .
+    container_name: python-search-app
+    ports:
+      - "5000:5000"
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+    depends_on:
+      - elasticsearch
+    networks:
+      - search-net
+
+networks:
+  search-net:
+    driver: bridge

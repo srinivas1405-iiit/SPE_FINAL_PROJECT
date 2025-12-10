@@ -7,8 +7,11 @@ import csv
 import tensorflow as tf
 import tensorflow_hub as hub
 
+import os
+
 # connect to ES on localhost on port 9200
-es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+es_host = os.environ.get('ELASTICSEARCH_HOST', 'localhost')
+es = Elasticsearch([{'host': es_host, 'port': 9200}])
 if es.ping():
 	print('Connected to ES!')
 else:
@@ -63,7 +66,12 @@ NUM_QUESTIONS_INDEXED = 200000
 # Col-Names: Id,OwnerUserId,CreationDate,ClosedDate,Score,Title,Body
 cnt=0
 
-with open('./semantic-search-engine-main/SearchEngine_QA/data/Questions.csv', encoding="latin1") as csvfile:
+
+# Validating files existence
+base_path = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(base_path, 'data/Questions.csv')
+
+with open(csv_path, encoding="latin1") as csvfile:
 	readCSV = csv.reader(csvfile, delimiter=',' )
 	next(readCSV, None)  # skip the headers 
 	for row in readCSV:

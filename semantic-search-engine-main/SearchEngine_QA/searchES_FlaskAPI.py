@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import sys
 from elasticsearch import Elasticsearch
@@ -12,15 +13,22 @@ from flask import Flask, render_template, jsonify
 
 def connect2ES():
     # connect to ES on localhost on port 9200
-    es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
-    if es.ping():
-            print('Connected to ES!')
-    else:
-            print('Could not connect!')
-            sys.exit()
-
-    print("*********************************************************************************");
-    return es
+    es_host = os.environ.get('ELASTICSEARCH_HOST', 'localhost')
+    print(f"Connecting to Elasticsearch at {es_host}:9200...")
+    
+    for i in range(30):
+        try:
+            es = Elasticsearch([{'host': es_host, 'port': 9200}])
+            if es.ping():
+                print('Connected to ES!')
+                return es
+        except Exception:
+            pass
+        print(f"Waiting for ES... ({i+1}/30)")
+        time.sleep(2)
+        
+    print('Could not connect to ES after multiple attempts!')
+    sys.exit()
 
 def keywordSearch(es, q):
     #Search by Keywords
