@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'your-dockerhub-username/semantic-search-engine'
+        DOCKER_TAG = "v${BUILD_NUMBER}"
+        KUBECONFIG = credentials('kubeconfig') 
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    echo 'Building Docker Image...'
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    echo 'Running Tests...'
+                    // Create a temporary container to run tests
+                    sh "docker run --rm ${DOCKER_IMAGE}:${DOCKER_TAG} python -m pytest tests/"
+                }
+            }
+        }
+
+        stage('Push') {
+            steps {
+                script {
+                    echo 'Pushing payload to Docker Hub...'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Deploying to Kubernetes using Ansible...'
+                    // Ensure ansible is installed in the agent or run inside a tool container
+                    // Here we assume Ansible is available on the Jenkins agent
+                    dir('ansible') {
+                        sh "ansible-playbook deploy.yml"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
+}

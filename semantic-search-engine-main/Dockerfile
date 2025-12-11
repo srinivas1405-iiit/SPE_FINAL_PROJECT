@@ -18,6 +18,11 @@ COPY . .
 # Environment variable for Flask
 ENV FLASK_APP=SearchEngine_QA/searchES_FlaskAPI.py
 ENV ELASTICSEARCH_HOST=elasticsearch
+ENV PYTHONUNBUFFERED=1
+
+# Preload the model during build time
+COPY preload_model.py .
+RUN python preload_model.py
 
 # Expose port 5000 for the Flask app
 EXPOSE 5000

@@ -1,0 +1,45 @@
+---
+- name: Apply Vault Manifest
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/vault.yaml
+
+- name: Apply Elasticsearch Deployment
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/elasticsearch-deployment.yaml
+
+- name: Apply Elasticsearch Service
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/elasticsearch-service.yaml
+
+- name: Apply Logstash ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/logstash-config.yaml
+
+- name: Apply Logstash Deployment
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/logstash-deployment.yaml
+
+- name: Apply Kibana Deployment and Service
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/kibana-deployment.yaml
+
+- name: Apply Flask App Deployment
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/flask-deployment.yaml
+
+- name: Apply Flask App Service
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/flask-service.yaml
+
+- name: Apply HPA
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/hpa.yaml

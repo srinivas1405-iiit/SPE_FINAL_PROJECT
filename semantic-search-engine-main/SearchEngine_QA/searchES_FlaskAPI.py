@@ -10,6 +10,15 @@ import tensorflow_hub as hub
 from flask import Flask, render_template, jsonify
 
 
+import logging
+import logstash
+
+# Configure Logging
+host = 'logstash'
+test_logger = logging.getLogger('python-logstash-logger')
+test_logger.setLevel(logging.INFO)
+# TCP Logstash Handler
+test_logger.addHandler(logstash.TCPLogstashHandler(host, 5000, version=1))
 
 def connect2ES():
     # connect to ES on localhost on port 9200
@@ -111,6 +120,7 @@ def home():
 
 @app.route('/api/search/<query>')
 def search_api(query):
+    test_logger.info('Search Query Received: ' + query)
     q = query.replace("+", " ")
     res_kw = keywordSearch(es, q)
     res_semantic = sentenceSimilaritybyNN( es, q)
@@ -160,4 +170,4 @@ def get_details(q_id):
     })
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
