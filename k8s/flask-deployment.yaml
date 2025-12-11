@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-search-app
+  labels:
+    app: python-search-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-search-app
+  template:
+    metadata:
+      labels:
+        app: python-search-app
+    spec:
+      containers:
+      - name: python-search-app
+        image: python-search-app:latest
+        imagePullPolicy: Never # Use local image loaded into Minikube
+        ports:
+        - containerPort: 5000
+        env:
+        - name: ELASTICSEARCH_HOST
+          value: "elasticsearch"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
