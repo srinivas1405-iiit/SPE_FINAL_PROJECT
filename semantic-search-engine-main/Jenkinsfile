@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'srinivas1405iiit/semantic-search-engine'
+        DOCKER_IMAGE = 'srinivas1405/semantic-search-engine'
         DOCKER_TAG = "v${BUILD_NUMBER}"
         KUBECONFIG = credentials('kubeconfig') 
     }
