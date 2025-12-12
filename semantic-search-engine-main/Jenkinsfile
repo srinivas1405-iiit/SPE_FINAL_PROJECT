@@ -55,10 +55,18 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to Kubernetes using Ansible...'
-                    // Ensure ansible is installed in the agent or run inside a tool container
-                    // Here we assume Ansible is available on the Jenkins agent
-                    dir('semantic-search-engine-main/ansible') {
-                        sh "ansible-playbook deploy.yml"
+                    
+                    // 1. FIX: Install the missing Python library
+                    // We use "pip3" because the error mentioned "/usr/bin/python3"
+                    sh 'pip3 install kubernetes'
+                    
+                    // 2. Run the playbook with Credentials
+                    // We wrap this in "withCredentials" so Ansible can access your cluster
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        dir('semantic-search-engine-main/ansible') {
+                            // We explicitly pass the KUBECONFIG environment variable
+                            sh 'ansible-playbook deploy.yml'
+                        }
                     }
                 }
             }
