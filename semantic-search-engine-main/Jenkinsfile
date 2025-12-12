@@ -35,11 +35,12 @@ pipeline {
                 script {
                     echo 'Pushing payload to Docker Hub...'
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                        dir('semantic-search-engine-main') {
-                            sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                            sh "docker push ${DOCKER_IMAGE}:latest"
-                        }
+                        // Use single quotes to let shell resolve environment variables
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        
+                        // Push images (double quotes for Groovy interpolation of image name)
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
                     }
                 }
             }
