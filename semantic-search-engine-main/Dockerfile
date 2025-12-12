@@ -12,17 +12,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy the current directory contents into the container at /app
-COPY . .
-
-# Environment variable for Flask
-ENV FLASK_APP=SearchEngine_QA/searchES_FlaskAPI.py
-ENV ELASTICSEARCH_HOST=elasticsearch
-ENV PYTHONUNBUFFERED=1
-
-# Preload the model during build time
+# Preload the model during build time (Cache this layer!)
 COPY preload_model.py .
 RUN python preload_model.py
+
+# Copy the rest of the application code (frequent changes)
+COPY . .
 
 # Expose port 5000 for the Flask app
 EXPOSE 5000

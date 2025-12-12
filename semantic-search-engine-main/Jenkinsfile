@@ -65,8 +65,9 @@ pipeline {
                     // We wrap this in "withCredentials" so Ansible can access your cluster
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                         dir('semantic-search-engine-main/ansible') {
-                            // We explicitly pass the KUBECONFIG environment variable
-                            sh 'ansible-playbook deploy.yml'
+                            // FIX: We explicitly export K8S_AUTH_KUBECONFIG to force Ansible 
+                            // to use the file instead of the Pod's internal Service Account.
+                            sh 'export K8S_AUTH_KUBECONFIG=$KUBECONFIG && ansible-playbook deploy.yml'
                         }
                     }
                 }
