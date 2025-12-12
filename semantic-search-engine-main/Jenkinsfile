@@ -11,9 +11,11 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo 'Building Docker Image...'
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                    dir('semantic-search-engine-main') {
+                        echo 'Building Docker Image...'
+                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                    }
                 }
             }
         }
@@ -47,7 +49,7 @@ pipeline {
                     echo 'Deploying to Kubernetes using Ansible...'
                     // Ensure ansible is installed in the agent or run inside a tool container
                     // Here we assume Ansible is available on the Jenkins agent
-                    dir('ansible') {
+                    dir('semantic-search-engine-main/ansible') {
                         sh "ansible-playbook deploy.yml"
                     }
                 }
