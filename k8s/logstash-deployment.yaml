@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash:7.17.9
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/logstash/pipeline/
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: logstash-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: default
+spec:
+  selector:
+    app: logstash
+  ports:
+  - port: 5000
+    targetPort: 5000

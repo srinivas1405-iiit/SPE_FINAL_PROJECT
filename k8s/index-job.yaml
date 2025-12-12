@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: index-job
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+      - name: index-job
+        image: python-search-app:latest
+        imagePullPolicy: Never
+        command: ["python", "SearchEngine_QA/indexES.py"]
+        env:
+        - name: ELASTICSEARCH_HOST
+          value: "elasticsearch"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1000m"
+            memory: "3Gi"
+      restartPolicy: Never
+  backoffLimit: 1
