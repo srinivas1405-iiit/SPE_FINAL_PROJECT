@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'your-dockerhub-username/semantic-search-engine'
+        DOCKER_IMAGE = 'srinivas1405iiit/semantic-search-engine'
         DOCKER_TAG = "v${BUILD_NUMBER}"
         KUBECONFIG = credentials('kubeconfig') 
     }
@@ -36,8 +36,10 @@ pipeline {
                     echo 'Pushing payload to Docker Hub...'
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
                         sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        sh "docker push ${DOCKER_IMAGE}:latest"
+                        dir('semantic-search-engine-main') {
+                            sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            sh "docker push ${DOCKER_IMAGE}:latest"
+                        }
                     }
                 }
             }
