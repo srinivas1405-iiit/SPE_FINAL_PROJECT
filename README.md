@@ -12,7 +12,6 @@ The DevOps framework enables:
 - **Continuous Deployment**: Seamless deployment to Kubernetes using Ansible.
 - **Scalability**: Horizontal Pod Autoscaling (HPA) based on CPU load.
 - **Observability**: Centralized logging and visualization with the ELK Stack.
-- **Security**: Infrastructure for secret management using HashiCorp Vault.
 
 ---
 
@@ -101,3 +100,5 @@ cd semantic-search-engine-main
 pip install -r requirements.txt
 python -m pytest tests/
 ```
+
+changes to trigger webhook
