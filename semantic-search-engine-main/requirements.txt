@@ -3,3 +3,4 @@ elasticsearch==7.17.9
 tensorflow
 tensorflow-hub
 python-logstash
+pytest
