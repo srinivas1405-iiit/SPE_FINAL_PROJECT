@@ -34,13 +34,21 @@ pipeline {
             steps {
                 script {
                     echo 'Pushing payload to Docker Hub...'
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        // Use single quotes to let shell resolve environment variables
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         
-                        // Push images (double quotes for Groovy interpolation of image name)
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        sh "docker push ${DOCKER_IMAGE}:latest"
+                        // 1. Debug: Check if variables are loaded
+                        sh 'echo "User is: $DOCKER_USER"'
+                        
+                        // 2. Login: Quotes around variables prevent the "interactive" error
+                        sh 'echo $DOCKER_PASS | docker login -u "$DOCKER_USER" --password-stdin'
+                        
+                        // 3. Push
+                        dir('semantic-search-engine-main') {
+                            // Use env vars from 'environment' block
+                            sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+                            sh 'docker push $DOCKER_IMAGE:latest'
+                        }
                     }
                 }
             }
