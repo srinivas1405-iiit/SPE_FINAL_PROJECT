@@ -35,19 +35,16 @@ pipeline {
                 script {
                     echo 'Pushing payload to Docker Hub...'
                     
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    // "docker.withRegistry" handles the login securely without shell pipes
+                    // The first argument '' means "Default Docker Hub". 
+                    // The second argument is your credential ID.
+                    docker.withRegistry('', 'docker-hub-credentials') {
                         
-                        // 1. Debug: Check if variables are loaded
-                        sh 'echo "User is: $DOCKER_USER"'
-                        
-                        // 2. Login: Quotes around variables prevent the "interactive" error
-                        sh 'echo $DOCKER_PASS | docker login -u "$DOCKER_USER" --password-stdin'
-                        
-                        // 3. Push
                         dir('semantic-search-engine-main') {
-                            // Use env vars from 'environment' block
-                            sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
-                            sh 'docker push $DOCKER_IMAGE:latest'
+                            // We are already logged in here! Just push.
+                            // using env vars for flexibility
+                            sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            sh "docker push ${DOCKER_IMAGE}:latest"
                         }
                     }
                 }
