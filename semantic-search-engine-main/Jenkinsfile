@@ -58,7 +58,8 @@ pipeline {
                     
                     // 1. FIX: Install the missing Python library
                     // We use "pip3" because the error mentioned "/usr/bin/python3"
-                    sh 'pip3 install kubernetes'
+                    // Added --break-system-packages to bypass PEP 668 restriction in Debian 12+
+                    sh 'pip3 install kubernetes --break-system-packages'
                     
                     // 2. Run the playbook with Credentials
                     // We wrap this in "withCredentials" so Ansible can access your cluster
