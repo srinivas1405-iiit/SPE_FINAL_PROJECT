@@ -100,6 +100,5 @@ Run unit tests locally:
 cd semantic-search-engine-main
 pip install -r requirements.txt
 python -m pytest tests/
-
-i am srinivas
 ```
+i am srinivas
