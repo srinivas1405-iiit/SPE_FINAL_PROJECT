@@ -52,45 +52,17 @@ pipeline {
         }
 
         stage('Deploy') {
-            agent {
-                kubernetes {
-                    yaml '''
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    some-label: some-label-value
-spec:
-  containers:
-  - name: ansible
-    image: willhallonline/ansible:alpine
-    command:
-    - cat
-    tty: true
-    volumeMounts:
-    - mountPath: "/root/.kube"
-      name: kube-config
-  volumes:
-  - name: kube-config
-    emptyDir: {}
-'''
-                }
-            }
             steps {
                 script {
                     echo "Deploying to Kubernetes using Ansible..."
                     
-                    // Run commands INSIDE the 'ansible' container defined above
-                    container('ansible') {
-                        dir('semantic-search-engine-main/ansible') {
-                            
-                            // Install Python Libs
-                            sh 'pip3 install kubernetes --break-system-packages'
-                            
-                            // Inject Kubeconfig and Run Playbook
-                            withKubeConfig([credentialsId: 'kubeconfig']) {
-                                sh 'ansible-playbook deploy.yml'
-                            }
+                    // Navigate to the ansible folder
+                    dir('semantic-search-engine-main/ansible') {
+                        
+                        // We simply use the 'ansible-playbook' command directly
+                        // The 'withKubeConfig' step handles the authentication magic
+                        withKubeConfig([credentialsId: 'kubeconfig']) {
+                            sh 'ansible-playbook deploy.yml'
                         }
                     }
                 }
