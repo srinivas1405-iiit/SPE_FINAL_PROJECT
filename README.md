@@ -100,7 +100,3 @@ cd semantic-search-engine-main
 pip install -r requirements.txt
 python -m pytest tests/
 ```
-
-i am srinivas
-This is my spe endterm project
-
