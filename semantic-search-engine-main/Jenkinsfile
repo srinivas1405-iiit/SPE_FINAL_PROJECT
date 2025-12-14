@@ -54,20 +54,22 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo 'Deploying to Kubernetes using Ansible...'
+                    echo "Deploying to Kubernetes using Ansible..."
                     
-                    // 1. FIX: Install the missing Python library
-                    // We use "pip3" because the error mentioned "/usr/bin/python3"
-                    // Added --break-system-packages to bypass PEP 668 restriction in Debian 12+
-                    sh 'pip3 install kubernetes --break-system-packages'
-                    
-                    // 2. Run the playbook with Credentials
-                    // We wrap this in "withCredentials" so Ansible can access your cluster
-                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    // We pull an image that HAS Ansible and Python pre-installed
+                    docker.image('willhallonline/ansible:alpine').inside('--entrypoint=""') {
+                        
+                        // We need to verify we are in the ansible directory
                         dir('semantic-search-engine-main/ansible') {
-                            // FIX: We explicitly export K8S_AUTH_KUBECONFIG to force Ansible 
-                            // to use the file instead of the Pod's internal Service Account.
-                            sh 'export K8S_AUTH_KUBECONFIG=$KUBECONFIG && ansible-playbook deploy.yml'
+                            
+                            // Install the python library required for Ansible K8s module
+                            sh 'pip3 install kubernetes --break-system-packages'
+                            
+                            // 1. Inject the Kubeconfig credential
+                            withKubeConfig([credentialsId: 'kubeconfig']) {
+                                // 2. Run the playbook
+                                sh 'ansible-playbook deploy.yml'
+                            }
                         }
                     }
                 }
