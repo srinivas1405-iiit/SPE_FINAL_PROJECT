@@ -52,22 +52,43 @@ pipeline {
         }
 
         stage('Deploy') {
+            agent {
+                kubernetes {
+                    yaml '''
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: some-label-value
+spec:
+  containers:
+  - name: ansible
+    image: willhallonline/ansible:alpine
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - mountPath: "/root/.kube"
+      name: kube-config
+  volumes:
+  - name: kube-config
+    emptyDir: {}
+'''
+                }
+            }
             steps {
                 script {
                     echo "Deploying to Kubernetes using Ansible..."
                     
-                    // We pull an image that HAS Ansible and Python pre-installed
-                    docker.image('willhallonline/ansible:alpine').inside('--entrypoint=""') {
-                        
-                        // We need to verify we are in the ansible directory
+                    // Run commands INSIDE the 'ansible' container defined above
+                    container('ansible') {
                         dir('semantic-search-engine-main/ansible') {
                             
-                            // Install the python library required for Ansible K8s module
+                            // Install Python Libs
                             sh 'pip3 install kubernetes --break-system-packages'
                             
-                            // 1. Inject the Kubeconfig credential
+                            // Inject Kubeconfig and Run Playbook
                             withKubeConfig([credentialsId: 'kubeconfig']) {
-                                // 2. Run the playbook
                                 sh 'ansible-playbook deploy.yml'
                             }
                         }
