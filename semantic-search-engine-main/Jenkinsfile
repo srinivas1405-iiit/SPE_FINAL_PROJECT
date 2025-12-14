@@ -56,13 +56,15 @@ pipeline {
                 script {
                     echo "Deploying to Kubernetes using Ansible..."
                     
-                    // Navigate to the ansible folder
                     dir('semantic-search-engine-main/ansible') {
                         
-                        // We simply use the 'ansible-playbook' command directly
-                        // The 'withKubeConfig' step handles the authentication magic
+                        // 1. Force install the missing library explicitly
+                        // We filter warnings to keep logs clean
+                        sh 'pip3 install kubernetes --break-system-packages || echo "Already installed"'
+                        
+                        // 2. Run Ansible with the python interpreter explicitly set
                         withKubeConfig([credentialsId: 'kubeconfig']) {
-                            sh 'ansible-playbook deploy.yml'
+                            sh 'ansible-playbook deploy.yml -e "ansible_python_interpreter=/usr/bin/python3"'
                         }
                     }
                 }
