@@ -652,6 +652,21 @@ def sentenceSimilaritybyNN(es, sent):
 ![System Overview](Screenshots%20SPE/IMG-20251212-WA0014.jpg)
 *Complete system running with all components*
 
+### 7.13 Kibana Dashboard - Log Visualization
+
+![Kibana Dashboard Logs](Screenshots%20SPE/kibana_dashboard_logs.jpg)
+*Kibana dashboard displaying application logs and search queries*
+
+### 7.14 Semantic Search Engine with Results
+
+![Semantic Search Results](Screenshots%20SPE/semantic%20search%20engine%20with%20results.jpg)
+*Semantic Search Engine interface showing search results with semantic matching*
+
+### 7.15 Additional System Screenshot
+
+![Additional System View](Screenshots%20SPE/WhatsApp%20Image%202025-12-13%20at%2023.26.56_a0cc30b1.jpg)
+*Additional view of the deployed system*
+
 ---
 
 ## 8. Pipeline Workflow

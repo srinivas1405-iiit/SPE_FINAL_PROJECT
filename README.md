@@ -64,19 +64,6 @@ cd semantic-search-engine-main/ansible
 ansible-playbook deploy.yml
 ```
 
-### Accessing the Application
-
-| Service | access URL (Minikube) |
-| :--- | :--- |
-| **Search App** | `http://<minikube-ip>:30005` (NodePort) |
-| **Kibana** | `http://<minikube-ip>:30601` (NodePort) |
-| **Jenkins** | `http://<minikube-ip>:30000` (NodePort) |
-
-
-*(Note: Check your specific Service NodePorts if different)*
-
----
-
 ## ✨ Key Features (Evaluation Criteria)
 
 -   **✅ Modular Design**: Ansible code is structured into reusable Roles (`roles/k8s_deploy`).
