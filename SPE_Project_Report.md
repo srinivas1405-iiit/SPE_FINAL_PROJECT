@@ -654,7 +654,7 @@ def sentenceSimilaritybyNN(es, sent):
 
 ### 7.13 Kibana Dashboard - Log Visualization
 
-![Kibana Dashboard Logs](Screenshots%20SPE/kibana%20dashboard%20to%20see%20logs.jpg)
+![Kibana Dashboard Logs](Screenshots%20SPE/kibana_dashboard_logs.jpg)
 *Kibana dashboard displaying application logs and search queries*
 
 ### 7.14 Semantic Search Engine with Results
